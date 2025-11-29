@@ -175,3 +175,99 @@ Tracking `lastError` means the final thrown error:
 
 
 
+# ⏱️ Task 3 — Sliding Window Rate Limiter (Python)
+
+## 🧠 Thought Process & Solution Steps
+
+### 🎯 **Pattern Choice**
+
+The **Sliding Window Log Algorithm** was selected for its precision in enforcing API rate limits.
+
+### 🗂️ **Alternatives Considered (and Rejected)**
+
+#### ❌ **Fixed Window Counter**
+
+* Very simple, but suffers from the *burst problem*.
+* A user could make 5 requests just before the window resets and 5 right after → **10 requests in seconds**.
+
+#### ❌ **Leaky Bucket**
+
+* More complex to implement correctly.
+* Typically requires an underlying queuing system (e.g., Redis).
+* Overkill for this task.
+
+➡️ **Winner: Sliding Window Log** — *accurate, simple, and lightweight.*
+
+---
+
+## 📝 Step-by-Step Workflow
+
+### 1️⃣ **Data Structure**
+
+A `defaultdict(list)` maps:
+
+```
+user_id → [timestamps_of_requests]
+```
+
+Perfect for grouping requests by user and tracking their history.
+
+### 2️⃣ **Current Time Tracking**
+
+`time.time()` provides high-precision timestamps for reliable time-window comparisons.
+
+### 3️⃣ **Sliding Window Logic (Auto-Reset)**
+
+Expired timestamps are removed dynamically using:
+
+```python
+timestamp >= current_time - TIME_WINDOW_SECONDS
+```
+
+This gives a true **rolling window**, not a fixed reset at minute boundaries.
+
+### 4️⃣ **Limit Enforcement**
+
+* After filtering, the list length represents the number of valid requests within the window.
+* If the count is below the limit, the request is allowed and timestamp appended.
+* Otherwise, the request is blocked.
+
+---
+
+# ✅ Why This Solution Is Best
+
+### 🎯 **1. Maximum Accuracy**
+
+The Sliding Window Log enforces limits *exactly* as intended:
+
+> **5 requests per 60 seconds per user — no bursts, no loopholes.**
+
+Example:
+If a user sends requests at T = 5, 10, 15, 20, 25 →
+A 6th request will be blocked until **T = 65**.
+
+### 🧼 **2. Simple & Maintainable**
+
+Uses:
+
+* A list
+* A list comprehension
+* A small dictionary
+
+No external dependencies. No scheduling jobs. Easy to understand and debug.
+
+### ⚡ **3. Efficient**
+
+Complexity is:
+
+```
+O(K)  where K ≤ limit (5)
+```
+
+Meaning → **effectively O(1)**.
+
+Extremely fast and scalable.
+
+
+
+
