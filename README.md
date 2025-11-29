@@ -1,7 +1,3 @@
-You got it. Here is the concise, GitHub README-formatted guide for your ideal answer key, featuring the best and most expected references for each task.
-
----
-
 # 🦅 Eagle Point AI - Technical Assessment Solution Guide
 
 This document serves as the solution guide for the Full-stack Developer Technical Assessment, demonstrating optimal approaches for each task and providing the required documentation structure and references.
@@ -51,14 +47,6 @@ Candidates should be evaluated not just on the code, but on how well they struct
 1.  **Thought Process:** A clear comparison of alternatives (e.g., Fixed vs. Sliding Window) and a justification for the final choice.
 2.  **Step-by-Step:** Explanation of problems encountered (e.g., initial difficulty handling ties in Task 1) and how they were solved.
 3.  **Rationale:** Explicit discussion of time complexity ($O(N)$ or $O(1)$) and why the chosen approach is optimal for production use (e.g., accuracy, maintainability).
-
-
-
-
-
-
-
-
 
 # 🧠 Task 1 — Thought Process & Solution Steps
 
