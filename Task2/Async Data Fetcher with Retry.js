@@ -1,91 +1,80 @@
 /**
- * Mock API call function that randomly succeeds or fails.
- * @returns {Promise<string>} Resolves with data or rejects with an error.
+ * A small mock network request used for testing retry behavior.
+ * Randomly succeeds or fails to mimic unstable networks.
  */
 function mockFetch(url) {
-  console.log(`Attempting to fetch data from: ${url}`);
+  console.log(`Fetching: ${url}`);
+
   return new Promise((resolve, reject) => {
-    // Simulate network delay
     setTimeout(() => {
-      const success = Math.random() > 0.4; // 60% chance of success
-      if (success) {
-        console.log("-> Success!");
-        resolve(`Data for ${url}`);
+      const ok = Math.random() > 0.4; // roughly 60% success rate
+      if (ok) {
+        console.log("✔ Request succeeded");
+        resolve(`Response from ${url}`);
       } else {
-        console.log("-> Failure (Simulated network error)");
-        reject(new Error(`Fetch failed for ${url}`));
+        console.log("✖ Request failed (simulated)");
+        reject(new Error(`Could not fetch ${url}`));
       }
-    }, 300); // Small delay to simulate latency
+    }, 300);
   });
 }
 
 /**
- * Fetches data from a URL with a specified number of retries upon failure.
- * Waits 1 second between retries.
- * * @param {string} url The URL (or mock function label) to fetch from.
- * @param {number} maxRetries The maximum number of times to retry on failure.
- * @returns {Promise<string>} The fetched data.
- * @throws {Error} Throws an error if all retries fail.
+ * Attempts to fetch data from a URL, retrying a few times if it fails.
+ *
+ * @param {string} url - Target URL or resource name.
+ * @param {number} maxRetries - How many times to retry after the first failure.
+ * @returns {Promise<string>}
  */
 async function fetchDataWithRetry(url, maxRetries) {
-  // Helper function to pause execution for a given duration
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
-  let lastError = null;
+  let error = null;
 
-  // Loop iterates maxRetries + 1 (the initial attempt plus all retries)
   for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
     try {
-      // Attempt the fetch
-      const data = await mockFetch(url);
-      // If successful, return the data immediately
-      return data;
-    } catch (error) {
-      lastError = error;
-      console.warn(
-        `Attempt ${attempt} failed. Retries left: ${maxRetries - (attempt - 1)}`
-      );
+      const result = await mockFetch(url);
+      return result;
+    } catch (err) {
+      error = err;
 
-      // Check if this was the last possible attempt (maxRetries + 1)
+      const retriesLeft = maxRetries - (attempt - 1);
+      console.warn(`Attempt ${attempt} failed. Remaining retries: ${retriesLeft}`);
+
       if (attempt === maxRetries + 1) {
-        console.error(
-          `Max retries reached (${maxRetries}). Throwing final error.`
-        );
-        // If max retries are reached, throw the error
         throw new Error(
-          `Failed to fetch data after ${maxRetries} retries. Reason: ${lastError.message}`
+          `All ${maxRetries} retries failed. Last error: ${error.message}`
         );
       }
 
-      // Wait 1 second before the next attempt
-      console.log(`Waiting 1 second before attempt ${attempt + 1}...`);
-      await delay(1000);
+      console.log(`Retrying in 1 second...`);
+      await sleep(1000);
     }
   }
 }
 
-// --- Working Examples ---
-async function runExamples() {
-  console.log(
-    "--- Example 1: Successful Fetch (should succeed quickly or after a few retries) ---"
-  );
+/* ------------------------  Example Usage  ------------------------ */
+
+async function runDemo() {
+  console.log("---- Example 1: Mock Fetch with Retry ----");
+
   try {
-    const result = await fetchDataWithRetry("Resource-A", 3);
-    console.log(`\nExample 1 Final Result: ${result}\n`);
-  } catch (e) {
-    console.error(`\nExample 1 Final Failure: ${e.message}\n`);
+    const data = await fetchDataWithRetry("Sample-Resource", 3);
+    console.log("Final Result:", data);
+  } catch (err) {
+    console.log("Final Error:", err.message);
   }
 
-  console.log("--- Example 2: Maximum Retries Scenario (likely to fail) ---");
-  // Using a higher chance of failure (e.g., if we modified mockFetch to 90% fail rate)
-  // to reliably test the max retry path. Keeping the original 60% success rate
-  // makes this a good real-world test of the retry mechanism.
+  console.log("\n---- Example 2: Real URL Fetch (no mock) ----");
+
   try {
-    const result = await fetchDataWithRetry("Resource-B", 2);
-    console.log(`\nExample 2 Final Result: ${result}\n`);
-  } catch (e) {
-    console.error(`\nExample 2 Final Failure: ${e.message}\n`);
+    const realUrl = "https://jsonplaceholder.typicode.com/todos/1";
+    const response = await fetch(realUrl);
+    const jsonData = await response.json();
+    console.log("Fetched real API data:", jsonData);
+  } catch (err) {
+    console.error("Failed to fetch real data:", err.message);
   }
 }
 
-runExamples();
+runDemo();
