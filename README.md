@@ -271,3 +271,40 @@ Extremely fast and scalable.
 
 
 
+
+
+# ▶️ Running the Scripts
+
+## 📝 **Run Smart Text Analyzer**
+
+Use the following command in your terminal:
+
+```bash
+python "/path/to/your/project/Smart Text Analyzer.py"
+```
+
+> 💡 **Tip:**
+> Replace `/path/to/your/project/` with the actual folder where you saved the file.
+
+---
+
+## 📝 **Run Rate Limiter**
+
+Execute the script using:
+
+```bash
+python "/path/to/your/project/Rate Limiter.py"
+```
+
+> 📌 This works for **any directory structure**, whether you're on Windows, macOS, or Linux.
+
+---
+
+## 🧭 Example (Windows Git Bash / PowerShell)
+
+```bash
+python "C:/Users/YourName/Desktop/YourProjectFolder/Smart Text Analyzer.py"
+python "C:/Users/YourName/Desktop/YourProjectFolder/Rate Limiter.py"
+```
+
+
