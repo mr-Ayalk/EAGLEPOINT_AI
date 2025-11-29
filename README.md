@@ -1,3 +1,65 @@
+You got it. Here is the concise, GitHub README-formatted guide for your ideal answer key, featuring the best and most expected references for each task.
+
+---
+
+# 🦅 Eagle Point AI - Technical Assessment Solution Guide
+
+This document serves as the solution guide for the Full-stack Developer Technical Assessment, demonstrating optimal approaches for each task and providing the required documentation structure and references.
+
+---
+
+## 💻 Task 1: Smart Text Analyzer (Python)
+
+### **Key Approach: Efficient Tokenization & `collections.Counter`**
+
+| Aspect | Optimal Technique | Expected Reference |
+| :--- | :--- | :--- |
+| **Punctuation Handling** | Utilize the **`re` module** to replace non-alphanumeric characters (except spaces) with a space, ensuring clean tokenization. | **Python Docs: `re` module** (`re.sub` for cleaning). |
+| **Word Frequency** | Use **`collections.Counter`** for highly efficient ($O(N)$) case-insensitive frequency counting. | **Python Docs: `collections.Counter`** |
+| **Longest Word(s)** | Find the `max(words, key=len)` then use a **list comprehension with a `set`** to handle ties and ensure uniqueness. | **Python Docs: Built-in Functions** (`max`, `len`). |
+
+---
+
+## 🌐 Task 2: Async Data Fetcher with Retry (JavaScript)
+
+### **Key Approach: `async/await` with Loop-Based Retry**
+
+| Aspect | Optimal Technique | Expected Reference |
+| :--- | :--- | :--- |
+| **Asynchronous Control** | Use **`async/await`** with a `for` loop to enforce sequential attempts, ensuring clean, readable control flow. | **MDN Web Docs: `async` function and `await`** |
+| **Delay Between Retries** | Implement a specific `delay` function using a **`Promise` wrapped around `setTimeout(..., 1000)`** and use `await delay(1000)`. | **MDN Web Docs: `Promise` and `setTimeout`** |
+| **Error Management** | Place the `try...catch` block **inside the loop** to handle intermediate failures gracefully without exiting the function prematurely. | **Technical Article: Async/Await Retry Pattern** (Focus on `try...catch` in loop). |
+
+---
+
+## 🔐 Task 3: Rate Limiter (Python)
+
+### **Key Approach: Sliding Window Log**
+
+| Aspect | Optimal Technique | Expected Reference |
+| :--- | :--- | :--- |
+| **Algorithm** | **Sliding Window Log** approach. This is the most accurate method, avoiding the "burst" problems of the Fixed Window counter. | **Technical Article: Rate Limiting Algorithms** (Detailing the Sliding Window Log).  |
+| **Time Tracking** | Use **`time.time()`** for high-resolution, universal timestamps to ensure the 60-second window is measured precisely. | **Python Docs: `time` module** (`time.time`). |
+| **User Data Structure**| A **`defaultdict(list)`** mapping `user_id` to a list of request timestamps. **List comprehension** handles the auto-reset by filtering out expired timestamps. | **Python Docs: `collections.defaultdict`** |
+
+---
+
+## ✅ Documentation Quality Guide
+
+Candidates should be evaluated not just on the code, but on how well they structure their thought process. Look for the following in their submission:
+
+1.  **Thought Process:** A clear comparison of alternatives (e.g., Fixed vs. Sliding Window) and a justification for the final choice.
+2.  **Step-by-Step:** Explanation of problems encountered (e.g., initial difficulty handling ties in Task 1) and how they were solved.
+3.  **Rationale:** Explicit discussion of time complexity ($O(N)$ or $O(1)$) and why the chosen approach is optimal for production use (e.g., accuracy, maintainability).
+
+
+
+
+
+
+
+
+
 # 🧠 Task 1 — Thought Process & Solution Steps
 
 ## 🔧 **Language Choice**
