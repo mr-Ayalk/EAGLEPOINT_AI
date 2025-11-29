@@ -307,4 +307,7 @@ python "C:/Users/YourName/Desktop/YourProjectFolder/Smart Text Analyzer.py"
 python "C:/Users/YourName/Desktop/YourProjectFolder/Rate Limiter.py"
 ```
 
-
+Source Type,Specific Reference Content,Example URL
+Python Documentation,"re module documentation for regular expressions, specifically re.sub() for text cleaning and punctuation removal.",https://docs.python.org/3/library/re.html
+Python Documentation,collections.Counter usage for highly efficient frequency counting.,https://docs.python.org/3/library/collections.html#collections.Counter
+Stack Overflow/Article,Articles discussing time complexity of different approaches to finding the longest element in a list (confirming O(N) is achieved).,"(Specific search URL: e.g., ""Python regex remove punctuation"")"
