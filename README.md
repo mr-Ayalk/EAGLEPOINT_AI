@@ -8,7 +8,7 @@ This document serves as the solution guide for the Full-stack Developer Technica
 
 ### **Key Approach: Efficient Tokenization & `collections.Counter`**
 
-| Aspect | Optimal Technique | Expected Reference |
+| Aspect | Optimal Technique |  Reference Used |
 | :--- | :--- | :--- |
 | **Punctuation Handling** | Utilize the **`re` module** to replace non-alphanumeric characters (except spaces) with a space, ensuring clean tokenization. | **Python Docs: `re` module** (`re.sub` for cleaning). |
 | **Word Frequency** | Use **`collections.Counter`** for highly efficient ($O(N)$) case-insensitive frequency counting. | **Python Docs: `collections.Counter`** |
@@ -37,16 +37,6 @@ This document serves as the solution guide for the Full-stack Developer Technica
 | **Algorithm** | **Sliding Window Log** approach. This is the most accurate method, avoiding the "burst" problems of the Fixed Window counter. | **Technical Article: Rate Limiting Algorithms** (Detailing the Sliding Window Log).  |
 | **Time Tracking** | Use **`time.time()`** for high-resolution, universal timestamps to ensure the 60-second window is measured precisely. | **Python Docs: `time` module** (`time.time`). |
 | **User Data Structure**| A **`defaultdict(list)`** mapping `user_id` to a list of request timestamps. **List comprehension** handles the auto-reset by filtering out expired timestamps. | **Python Docs: `collections.defaultdict`** |
-
----
-
-## ✅ Documentation Quality Guide
-
-Candidates should be evaluated not just on the code, but on how well they structure their thought process. Look for the following in their submission:
-
-1.  **Thought Process:** A clear comparison of alternatives (e.g., Fixed vs. Sliding Window) and a justification for the final choice.
-2.  **Step-by-Step:** Explanation of problems encountered (e.g., initial difficulty handling ties in Task 1) and how they were solved.
-3.  **Rationale:** Explicit discussion of time complexity ($O(N)$ or $O(1)$) and why the chosen approach is optimal for production use (e.g., accuracy, maintainability).
 
 # 🧠 Task 1 — Thought Process & Solution Steps
 
