@@ -71,11 +71,3 @@ input_text = "The quick brown fox jumps over the lazy dog the fox"
 result = smart_text_analyzer(input_text)
 print(f"Input: '{input_text}'\nOutput: {result}\n")
 
-input_text_2 = "Hello, world! World is amazing."
-result_2 = smart_text_analyzer(input_text_2)
-print(f"Input: '{input_text_2}'\nOutput: {result_2}\n")
-
-# Example with ties and complex punctuation
-input_text_3 = "A racecar! A beautiful, fast, racecar?"
-result_3 = smart_text_analyzer(input_text_3)
-print(f"Input: '{input_text_3}'\nOutput: {result_3}\n")
