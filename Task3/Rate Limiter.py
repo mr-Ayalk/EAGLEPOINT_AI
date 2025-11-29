@@ -2,79 +2,65 @@ import time
 from collections import defaultdict
 from typing import Dict, List, Tuple
 
-# Configuration
-LIMIT_REQUESTS = 5
-TIME_WINDOW_SECONDS = 60
+# Simple sliding-window rate limiter:
+# Allow 5 requests per user every 60 seconds.
 
-# Data structure to store request logs: 
-# { user_id: [timestamp1, timestamp2, ...] }
-# defaultdict ensures that accessing a new user_id automatically creates an empty list.
-request_logs: Dict[str, List[float]] = defaultdict(list)
+MAX_REQUESTS = 5
+WINDOW_SECONDS = 60
+
+# Store timestamps of each user's requests
+request_history: Dict[str, List[float]] = defaultdict(list)
+
 
 def check_rate_limit(user_id: str) -> Tuple[bool, int]:
     """
-    Checks if a user has exceeded the rate limit (5 requests per 60 seconds).
-    Uses a Sliding Window Log approach.
-    
-    :param user_id: The unique identifier for the user.
-    :return: A tuple (is_allowed, remaining_requests_in_window).
+    Returns whether the user is allowed to make a request.
+    Uses a sliding window by cleaning out old timestamps.
     """
-    current_time = time.time()
-    
-    # 1. Auto-reset / Sliding Window Implementation
-    # Filter out timestamps older than the time window (60 seconds ago)
-    window_start_time = current_time - TIME_WINDOW_SECONDS
-    
-    # Efficiently update the list in place by filtering out old timestamps
-    # This acts as the auto-reset mechanism.
-    # Note: A simple re-assignment is cleaner in Python:
-    request_logs[user_id] = [
-        timestamp for timestamp in request_logs[user_id] 
-        if timestamp >= window_start_time
+    now = time.time()
+    window_start = now - WINDOW_SECONDS
+
+    # Remove timestamps older than the sliding window
+    request_history[user_id] = [
+        ts for ts in request_history[user_id] if ts >= window_start
     ]
-    
-    # 2. Check Limit
-    current_request_count = len(request_logs[user_id])
-    
-    if current_request_count < LIMIT_REQUESTS:
-        # Request is allowed: Log the current timestamp
-        request_logs[user_id].append(current_time)
-        remaining = LIMIT_REQUESTS - (current_request_count + 1)
-        return (True, remaining)
-    else:
-        # Request is blocked
-        return (False, 0)
 
-# --- Working Examples ---
+    used = len(request_history[user_id])
 
-print(f"--- Rate Limiter Test (Limit: {LIMIT_REQUESTS} / {TIME_WINDOW_SECONDS}s) ---")
-user_a = "user_A"
+    if used < MAX_REQUESTS:
+        # Log this request
+        request_history[user_id].append(now)
+        remaining = MAX_REQUESTS - (used + 1)
+        return True, remaining
 
-# Test 1: Allow 5 requests within the window
-for i in range(1, LIMIT_REQUESTS + 2):
-    is_allowed, remaining = check_rate_limit(user_a)
-    
-    if i <= LIMIT_REQUESTS:
-        # All requests 1-5 should be allowed
-        print(f"[{i:2}] Request for {user_a}: ALLOWED (Remaining: {remaining})")
-    else:
-        # Request 6 should be blocked
-        print(f"[{i:2}] Request for {user_a}: BLOCKED (Remaining: {remaining}) <--- BLOCKED")
+    return False, 0
 
-# Test 2: Wait for reset
-print("\n--- Waiting 60 seconds for auto-reset... ---")
-# Simulate the passage of the time window
-time.sleep(TIME_WINDOW_SECONDS) 
 
-is_allowed, remaining = check_rate_limit(user_a)
-print(f"[ 7] Request for {user_a} after 60s: {'ALLOWED' if is_allowed else 'BLOCKED'} (Remaining: {remaining})")
+# ------------------------------------------------------------------
 
-# Test 3: Multiple Users
-user_b = "user_B"
-# User B makes a single request
-is_allowed, remaining = check_rate_limit(user_b)
-print(f"\n[ 1] Request for {user_b}: {'ALLOWED' if is_allowed else 'BLOCKED'} (Remaining: {remaining})")
+print(f"--- Rate Limiter Demo ({MAX_REQUESTS} requests / {WINDOW_SECONDS} seconds) ---")
 
-# Check User A again immediately - should still be allowed if the window passed
-is_allowed, remaining = check_rate_limit(user_a)
-print(f"[ 8] Request for {user_a}: {'ALLOWED' if is_allowed else 'BLOCKED'} (Remaining: {remaining})")
+user = "user_A"
+
+# Test 1: user makes 6 requests back-to-back
+for i in range(1, MAX_REQUESTS + 2):
+    ok, remaining = check_rate_limit(user)
+    status = "ALLOWED" if ok else "BLOCKED"
+
+    print(f"[{i}] {status} (remaining: {remaining})")
+
+# Test 2: wait for the window to clear
+print("\nWaiting for the time window to expire...\n")
+time.sleep(WINDOW_SECONDS)
+
+ok, remaining = check_rate_limit(user)
+print(f"After waiting: {'ALLOWED' if ok else 'BLOCKED'} (remaining: {remaining})")
+
+# Test 3: another user
+other_user = "user_B"
+ok, remaining = check_rate_limit(other_user)
+print(f"\nUser B request: {'ALLOWED' if ok else 'BLOCKED'} (remaining: {remaining})")
+
+# User A should also work again after the wait
+ok, remaining = check_rate_limit(user)
+print(f"User A request: {'ALLOWED' if ok else 'BLOCKED'} (remaining: {remaining})")
